@@ -1,22 +1,26 @@
+
 services:
-
-  frontend:
-    build: ./frontend
-    ports:
-      - "80:80"
-    networks:
-      - attendance-network
-
   backend:
     build: ./backend
+    image: nss-attendance-backend:2.0
+    restart: unless-stopped
     ports:
       - "8000:8000"
+    # Reads runtime env file for Express
     env_file:
       - ./backend/.env
-    networks:
-      - attendance-network
-    restart: unless-stopped
 
-networks: 
-  attendance-network:
-    driver: bridge
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        # Reads .env on host machine and passes value to ARG in Dockerfile
+        # - REACT_APP_BACKEND_URL=${REACT_APP_BACKEND_URL}
+        - REACT_APP_BACKEND_URL=http://localhost:8000
+    image: nss-attendance-frontend:2.0
+    restart: unless-stopped
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
