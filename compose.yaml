@@ -1,0 +1,14 @@
+services:
+  frontend:
+    image: agrahariaman238work/nss-attendance-system-main:frontend-1.0
+    ports:
+      - "80:80"
+    restart: unless-stopped
+
+  backend:
+    image: agrahariaman238work/nss-attendance-system-main:backend-1.0
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./backend/.env
+    restart: unless-stopped

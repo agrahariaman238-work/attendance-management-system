@@ -6,13 +6,13 @@ import * as XLSX from "xlsx";
 import { backend_url } from "./services";
 
 function Home() {
-  const [AttendanceData, setAttendanceData] = useState(null);
+  const [AttendanceData, setAttendanceData] = useState([]);
   const [filteredEntries, setFilteredEntries] = useState([]);
   const [entriesToShow, setEntriesToShow] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
-  const [pastEventEntries, setPastEventEnteries] = useState(null);
-  const [activeEventsEnteries, setActiveEventsEnteries] = useState(null);
+  const [pastEventEntries, setPastEventEnteries] = useState([]);
+  const [activeEventsEnteries, setActiveEventsEnteries] = useState([]);
 
   useEffect(() => {
     fetchData();
@@ -22,16 +22,18 @@ function Home() {
     try {
       const response = await fetch(`${backend_url}/showEvents`);
       const responseData = await response.json();
+      const events = Array.isArray(responseData)
+        ? responseData
+        : [];
+      setAttendanceData(events);
 
-      setAttendanceData(responseData);
-
-      const ActivedisplayedEntries = responseData.filter(
+      const ActivedisplayedEntries = events.filter(
         (event) => new Date(event.endDate) >= new Date()
       );
 
       setActiveEventsEnteries(ActivedisplayedEntries);
       console.log("activeEventsEnteries are: ", activeEventsEnteries);
-      const PastdislayedEnteries = responseData.filter(
+      const PastdislayedEnteries = events.filter(
         (event) => new Date(event.endDate) < new Date()
       );
 
@@ -157,6 +159,10 @@ function Home() {
   }
 
   const handleReportClickActive = () => {
+    if(activeEventsEnteries.length === 0){
+      alert("No active events available");
+      return;
+  }
     const workbook = XLSX.utils.book_new();
     const worksheet = XLSX.utils.json_to_sheet(activeEventsEnteries);
     XLSX.utils.book_append_sheet(
@@ -204,7 +210,7 @@ function Home() {
             </tr>
           </thead>
           <tbody>
-            {activeEventsEnteries.map((event, index) => (
+            {activeEventsEnteries?.map((event, index) => (
               <tr
                 key={index}
                 style={{
@@ -306,7 +312,7 @@ function Home() {
             </tr>
           </thead>
           <tbody>
-            {displayedEntries.map((event, index) => (
+            {displayedEntries?.map((event, index) => (
               <tr
                 key={index}
                 style={{

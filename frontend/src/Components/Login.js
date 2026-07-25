@@ -24,10 +24,11 @@ function Login({ setIsPartialAuthenticated, setUserEmail }) {
     e.preventDefault();
 
     try {
+      console.log("Email: ", email, "Password: ", password);
       // First check if any user already logged in or not
       const token = localStorage.getItem("token");
       console.log("Token: ", token);
-
+// 'aman2026'
       if (token !== null) {
         console.log("Not Empty", token, typeof token);
         alert("First Logout current User then try to login");
