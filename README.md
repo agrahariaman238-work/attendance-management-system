@@ -8,7 +8,7 @@
 Clone the project
 
 ```bash
-  git clone https://github.com/Divyanshu723/NSS-Attendance-System.git
+  git clone url
 ```
 
 Go to the project directory
