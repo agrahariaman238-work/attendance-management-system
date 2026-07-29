@@ -1,8 +1,9 @@
 
 services:
   backend:
+    platform: linux/amd64
     build: ./backend
-    image: nss-attendance-backend:2.0
+    image: agrahariaman238work/nss-attendance-system-main:backend-2.0
     restart: unless-stopped
     ports:
       - "8000:8000"
@@ -11,14 +12,21 @@ services:
       - ./backend/.env
 
   frontend:
+    platform: linux/amd64
     build:
       context: ./frontend
       dockerfile: Dockerfile
       args:
         # Reads .env on host machine and passes value to ARG in Dockerfile
         # - REACT_APP_BACKEND_URL=${REACT_APP_BACKEND_URL}
-        - REACT_APP_BACKEND_URL=http://localhost:8000
-    image: nss-attendance-frontend:2.0
+        # - REACT_APP_BACKEND_URL=http://localhost:8000
+        #load balancer 
+        - REACT_APP_BACKEND_URL=http://nss-attendance-management-system-927014244.ap-south-1.elb.amazonaws.com:8000
+        #ecs task definition
+        # - REACT_APP_BACKEND_URL=http://3.109.108.194:8000
+        #ec2
+        # - REACT_APP_BACKEND_URL=http://52.66.225.4:8000
+    image: agrahariaman238work/nss-attendance-system-main:frontend-2.0
     restart: unless-stopped
     ports:
       - "3000:80"
