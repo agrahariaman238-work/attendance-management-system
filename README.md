@@ -4,7 +4,7 @@ A full-stack attendance platform built for NSS Society, used by 400+ students. H
 
 ## Why I built this
 
-[1-2 sentences in your own words: what problem the society had before this existed — e.g. manual attendance tracking, paper registers, delayed reporting — and why you decided to build it. This is the one thing a template can't write for you — fill this in.]
+Before this, NSS Society tracked attendance on paper and someone manually compiled it into a report every week. I built this to replace that process — and used it as a chance to actually deploy a full production setup (Docker, AWS ECS, Redis) instead of just running something locally.
 
 ## Architecture
 
@@ -74,4 +74,6 @@ REDIS_URL=
 
 ## What I'd improve next
 
-[2-3 honest, specific things — e.g. "add automated tests," "move to a proper CI/CD pipeline instead of manual ECS deploys," "add monitoring/alerting." This section signals maturity to a technical reviewer far more than claiming everything is perfect.]
+A real CI/CD pipeline — deployments to ECS are still a manual push-and-pray; I'd wire up GitHub Actions to build, test, and deploy automatically.
+
+Better attendance analytics — right now it tracks presence/absence; I'd like to add trends over time so the society can actually spot patterns, not just pull a raw report.
