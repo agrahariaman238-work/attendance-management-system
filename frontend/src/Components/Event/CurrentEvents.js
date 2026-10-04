@@ -4,7 +4,7 @@ import { Button, Modal } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { PencilFill, TrashFill } from "react-bootstrap-icons";
 import moment from "moment-timezone";
-import { backend_url } from "../services";
+import { backend_url, authFetch } from "../services";
 
 const AdminHeader = () => {
   const [AttendanceData, setAttendanceData] = useState(null);
@@ -35,7 +35,7 @@ const AdminHeader = () => {
 
   const fetchData = async () => {
     try {
-      const response = await fetch(`${backend_url}/showEvents`);
+      const response = await authFetch(`${backend_url}/showEvents`);
       const responseData = await response.json();
       setAttendanceData(responseData);
       const ActivedisplayedEntries = responseData.filter(
@@ -178,7 +178,7 @@ const AdminHeader = () => {
   const handleDelete = async () => {
     try {
       // Send DELETE request to delete admin from the database
-      await fetch(`${backend_url}/deleteEvent/${selectedAdminIdToDelete}`, {
+      await authFetch(`${backend_url}/deleteEvent/${selectedAdminIdToDelete}`, {
         method: "DELETE",
       });
 
@@ -207,7 +207,7 @@ const AdminHeader = () => {
     console.log(formDataInEditModel);
 
     try {
-      await fetch(`${backend_url}/updateEvent/${selectedEventIdToEdit}`, {
+      await authFetch(`${backend_url}/updateEvent/${selectedEventIdToEdit}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formDataInEditModel),

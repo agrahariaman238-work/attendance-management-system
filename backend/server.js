@@ -12,6 +12,7 @@ const adminRoutes = require("./routes/Admin");
 const eventRoutes = require("./routes/Event");
 const connectDatabase = require("./database/conn");
 const rateLimiter = require("./middleware/rateLimiter");
+const { setUser } = require("./middleware/auth");
 
 require("dotenv").config();
 
@@ -26,97 +27,32 @@ app.use(express.urlencoded({ extended: true }));
 // app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(cors({ origin: CORS_URL, credentials: true }));
+app.use(setUser);
+app.use(rateLimiter);
 
-const setUser = (req,res,next)=>{
-
-    try{
-
-        console.log("setUser middleware");
-
-
-        const authorizationHeader = req.headers.authorization;
-
-        const token = authorizationHeader && authorizationHeader.split(" ")[1];
-
-
-        if (!token || token === "null") {
-
-            return next();
-
-        }
-
-
-        const decodedToken = jwt.decode(token);
-
-
-        req.user = decodedToken;
-
-
-        console.log("set req.user:", req.user);
-
-
-        next();
-
-
-    }
-    catch(error){
-
-        console.log("JWT error:", error.message);
-
-        next();
-
+router.get("/checkAuth", async (req, res) => {
+  try {
+    if (!req.user) {
+      return res.json({ success: false, message: "Not Logged In" });
     }
 
-};
-router.get(
-"/checkAuth",
-setUser,
-rateLimiter,
-async(req,res)=>{
+    const admin = await Admin.findOne({ email: req.user.email });
 
-
-    console.log("/checkAuth controller");
-
-
-    if(!req.user){
-
-        return res.json({
-            success:false,
-            message:"Not Logged In"
-        });
-
+    if (!admin) {
+      return res.json({ success: false, message: "User Not found" });
     }
-
-
-    const adminType = req.user.adminType;
-    const adminEmail = req.user.email;
-
-
-    const admin = await Admin.findOne({
-        email:adminEmail
-    });
-
-
-    if(!admin){
-
-        return res.json({
-            success:false,
-            message:"User Not found"
-        });
-
-    }
-
 
     return res.json({
-
-        success:true,
-        adminType,
-        message:"Already Logged In"
-
+      success: true,
+      adminType: admin.adminType,
+      message: "Already Logged In",
     });
-
-
+  } catch (error) {
+    console.error("Error in /checkAuth:", error.message);
+    return res.status(500).json({ success: false, message: "Something went wrong" });
+  }
 });
+
 // const setUser = (req,res,next)=>{
 //     try{
 //           console.log("/checkAuth");
@@ -187,7 +123,6 @@ app.use(userRoutes);
 app.use(eventRoutes);
 app.use(adminRoutes);
 app.use(router);
-// app.use(rateLimiter);
 
 // Start the server
 app.listen(port, () => {

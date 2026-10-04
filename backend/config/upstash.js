@@ -4,10 +4,22 @@ const { Ratelimit } = require("@upstash/ratelimit");
 const dotenv = require("dotenv");
 dotenv.config();
 
-//create a new ratelimiter, that allows 5 requests per minute
+const redis = Redis.fromEnv();
+
+// General API limit, applied to every request (per user, or per IP when logged out)
 const ratelimit = new Ratelimit({
-  redis: Redis.fromEnv(),
-  limiter: Ratelimit.slidingWindow(30, "1 m"),
+  redis,
+  limiter: Ratelimit.slidingWindow(300, "1 m"),
+  prefix: "ratelimit:api",
+  timeout: 1000,
 });
 
-module.exports = { ratelimit };
+// Stricter limit for login / OTP endpoints to slow down brute force and email spam
+const authRatelimit = new Ratelimit({
+  redis,
+  limiter: Ratelimit.slidingWindow(10, "10 m"),
+  prefix: "ratelimit:auth",
+  timeout: 1000,
+});
+
+module.exports = { ratelimit, authRatelimit };

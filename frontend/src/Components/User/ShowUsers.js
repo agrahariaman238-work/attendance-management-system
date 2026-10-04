@@ -3,7 +3,7 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import { Button, Modal } from 'react-bootstrap';
 import { PencilFill, TrashFill } from 'react-bootstrap-icons';
 import * as XLSX from 'xlsx';
-import { backend_url } from "../services";
+import { backend_url, authFetch } from "../services";
 import toast from "react-hot-toast";
 
 const AdminHeader = () => {
@@ -39,7 +39,7 @@ const AdminHeader = () => {
 
     const fetchData = async () => {
         try {
-            const response = await fetch(`${backend_url}/showUsers`);
+            const response = await authFetch(`${backend_url}/showUsers`);
             const responseData = await response.json();
             setAttendanceData(responseData);
             setFilteredEntries(responseData);
@@ -193,7 +193,7 @@ const AdminHeader = () => {
         event.preventDefault();
 
         try {
-            const response = await fetch(`${backend_url}/addUser`, {
+            const response = await authFetch(`${backend_url}/addUser`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(formData),
@@ -263,7 +263,7 @@ const AdminHeader = () => {
     const handleDelete = async () => {
         try {
             // Send DELETE request to delete member from the database
-            await fetch(`${backend_url}/deleteUser/${selectedAdminIdToDelete}`, {
+            await authFetch(`${backend_url}/deleteUser/${selectedAdminIdToDelete}`, {
                 method: 'DELETE'
             });
 
@@ -293,7 +293,7 @@ const AdminHeader = () => {
         event.preventDefault()
         try {
             // Send edit / update request to update member from the database
-            await fetch(`${backend_url}/updateUser/${selectedMemberToEdit}`, {
+            await authFetch(`${backend_url}/updateUser/${selectedMemberToEdit}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(formDataInEditModel),

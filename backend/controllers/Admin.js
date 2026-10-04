@@ -1,4 +1,5 @@
 const Admin = require("../models/admin");
+const User = require("../models/user");
 const OTP = require("../models/OTP")
 const otpGenerator = require('otp-generator');
 require("dotenv").config();
@@ -11,7 +12,6 @@ const SECRET_KEY = process.env.secretKey;
 exports.login = async (req, res) => {
     try {
         // console.log("Secret Key is : ", secretKey);
-        console.log("req: ", req);
         console.log("Andr aagye ji");
         const { email, password } = req.body;
         if (!email || !password) {
@@ -75,23 +75,11 @@ exports.sendotp = async (req, res) => {
             lowerCaseAlphabets: false,
             specialChars: false,
         });
-        const result = await OTP.findOne({ otp: otp });
-        console.log("Result is Generate OTP Func");
-        console.log("OTP", otp);
-        console.log("Result", result);
-        while (result) {
-            otp = otpGenerator.generate(6, {
-                upperCaseAlphabets: false,
-            });
-        }
         const otpPayload = { email, otp };
-        console.log("OTP Payload", otpPayload);
-        const otpBody = await OTP.create(otpPayload);
-        console.log("OTP Body", otpBody);
+        await OTP.create(otpPayload);
         res.status(200).json({
             success: true,
             message: `OTP Sent Successfully`,
-            otp,
         });
     } catch (error) {
         console.log(error.message);
@@ -150,13 +138,17 @@ exports.checkOTP = async (req, res) => {
             { expiresIn: "24h" } // Token expires in 24 hours
         );
 
+        // OTPs are single use
+        await OTP.deleteMany({ email });
+
         return res.status(200).json({
             success: true,
             message: "Email Verified",
             token
         })
     } catch (error) {
-        
+        console.error("Error checking OTP:", error.message);
+        return res.status(500).json({ success: false, message: "Something went wrong" });
     }
 }
 

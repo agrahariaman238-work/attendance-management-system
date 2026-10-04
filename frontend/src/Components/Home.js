@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Button } from "react-bootstrap";
 import * as XLSX from "xlsx";
-import { backend_url } from "./services";
+import { backend_url, authFetch } from "./services";
 
 function Home() {
   const [AttendanceData, setAttendanceData] = useState([]);
@@ -20,7 +20,7 @@ function Home() {
 
   const fetchData = async () => {
     try {
-      const response = await fetch(`${backend_url}/showEvents`);
+      const response = await authFetch(`${backend_url}/showEvents`);
       const responseData = await response.json();
       const events = Array.isArray(responseData)
         ? responseData

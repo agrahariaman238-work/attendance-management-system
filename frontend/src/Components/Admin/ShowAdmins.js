@@ -3,7 +3,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { Button, Modal } from "react-bootstrap";
 import { PencilFill, TrashFill } from "react-bootstrap-icons";
 import * as XLSX from "xlsx";
-import { backend_url } from "../services";
+import { backend_url, authFetch } from "../services";
 import toast from "react-hot-toast";
 
 const AdminHeader = () => {
@@ -38,7 +38,7 @@ const AdminHeader = () => {
 
   const fetchData = async () => {
     try {
-      const response = await fetch(`${backend_url}/showAdmins`);
+      const response = await authFetch(`${backend_url}/showAdmins`);
       const responseData = await response.json();
       setAttendanceData(responseData);
       setFilteredEntries(responseData);
@@ -129,7 +129,7 @@ const AdminHeader = () => {
     }
 
     try {
-      const response = await fetch(`${backend_url}/addAdmin`, {
+      const response = await authFetch(`${backend_url}/addAdmin`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
@@ -208,7 +208,7 @@ const AdminHeader = () => {
   const handleDelete = async () => {
     try {
       // Send DELETE request to delete admin from the database
-      await fetch(`${backend_url}/deleteAdmin/${selectedAdminIdToDelete}`, {
+      await authFetch(`${backend_url}/deleteAdmin/${selectedAdminIdToDelete}`, {
         method: "DELETE",
       });
 
@@ -227,7 +227,7 @@ const AdminHeader = () => {
     console.log(formDataInEditModel);
     try {
       // Send edit / update request to update admin from the database
-      await fetch(`${backend_url}/updateAdmin/${selectedAdminIdToEdit}`, {
+      await authFetch(`${backend_url}/updateAdmin/${selectedAdminIdToEdit}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formDataInEditModel),
