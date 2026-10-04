@@ -1,29 +1,27 @@
-const { ratelimit } = require("../config/upstash.js");
+const { ratelimit, authRatelimit } = require("../config/upstash.js");
 
-const rateLimiter = async (req, res, next) => {
-    try {
-          let identifier;
+const createRateLimiter = (limiter) => async (req, res, next) => {
+  const identifier =
+    req.user && req.user.email ? `user:${req.user.email}` : `ip:${req.ip}`;
 
-        console.log("Rate limiter middleware invoked",req.user);
-          if (req.user && req.user.email) {
-            identifier = `user:${req.user.email}`;
-            console.log("User ID found:", req.user.email);
-        } else {
-            identifier = `ip:${req.ip}`;
-            console.log("No user ID found, using IP address:", req.ip);
-        }
-        
-        const { success } = await ratelimit.limit(identifier);
+  let success = true;
+  try {
+    ({ success } = await limiter.limit(identifier));
+  } catch (error) {
+    // Fail open: a Redis outage should not take the whole API down
+    console.error("Rate limiter unavailable, allowing request:", error.message);
+  }
 
-        if (!success) {
-            return res.status(429).json({message: "Too many requests. Please try again later." });
-        }
-        next();
-    }
-    catch (error) {
-        console.error("Error in rateLimiter middleware:", error);
-        next(error);
-    }
+  if (!success) {
+    return res
+      .status(429)
+      .json({ message: "Too many requests. Please try again later." });
+  }
+  next();
 };
 
+const rateLimiter = createRateLimiter(ratelimit);
+const authRateLimiter = createRateLimiter(authRatelimit);
+
 module.exports = rateLimiter;
+module.exports.authRateLimiter = authRateLimiter;

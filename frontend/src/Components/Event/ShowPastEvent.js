@@ -5,7 +5,7 @@ import { Container, Row, Col } from "react-bootstrap";
 import { Button, Modal } from "react-bootstrap";
 // import { PencilFill, TrashFill } from 'react-bootstrap-icons';
 import * as XLSX from "xlsx";
-import { backend_url } from "../services";
+import { backend_url, authFetch } from "../services";
 
 const ShowEvent = () => {
   const { id } = useParams();
@@ -27,7 +27,7 @@ const ShowEvent = () => {
 
   const fetchEvent = async () => {
     try {
-      const response = await fetch(`${backend_url}/showEvents`);
+      const response = await authFetch(`${backend_url}/showEvents`);
       const data = await response.json();
       console.log(data);
       const event = data.find((event) => event._id === id);
@@ -40,7 +40,7 @@ const ShowEvent = () => {
 
   const fetchData = async () => {
     try {
-      const response = await fetch(`${backend_url}/showUsers`);
+      const response = await authFetch(`${backend_url}/showUsers`);
       const data = await response.json();
       setUserData(data);
       setFilteredEntries(data);

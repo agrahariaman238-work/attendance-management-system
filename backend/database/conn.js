@@ -3,8 +3,6 @@ require("dotenv").config();
 
 const MONGOURI = process.env.MONGOURI;
 
-console.log(MONGOURI);
-
 const Connection = () => {
   mongoose.set("strictQuery", true);
 

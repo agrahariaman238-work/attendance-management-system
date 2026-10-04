@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Form, Button, Container, Row, Col } from "react-bootstrap";
 // import Home from '../Home';
 import moment from "moment-timezone";
-import { backend_url } from "../services";
+import { backend_url, authFetch } from "../services";
 import toast from 'react-hot-toast'
 
 const NewEventForm = () => {
@@ -51,7 +51,7 @@ const NewEventForm = () => {
     );
 
     try {
-      const response = await fetch(`${backend_url}/addEvent`, {
+      const response = await authFetch(`${backend_url}/addEvent`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
