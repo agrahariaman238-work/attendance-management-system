@@ -9,7 +9,7 @@ import toast from "react-hot-toast";
 const AdminHeader = () => {
     const [AttendanceData, setAttendanceData] = useState(null);
     const [filteredEntries, setFilteredEntries] = useState([]);
-    const [finalEntries, setFinalEntries] = useState(null);
+    const [finalEntries, setFinalEntries] = useState([]);
     const [entriesToShow, setEntriesToShow] = useState(10);
     const [currentPage, setCurrentPage] = useState(1);
     const [showModal, setShowModal] = React.useState(false);
@@ -37,18 +37,46 @@ const AdminHeader = () => {
         fetchData();
     }, []);
 
-    const fetchData = async () => {
-        try {
-            const response = await fetch(`${backend_url}/showUsers`);
-            const responseData = await response.json();
-            setAttendanceData(responseData);
-            setFilteredEntries(responseData);
-            setFinalEntries(responseData);
-        } catch (error) {
-            console.error('Error fetching data:', error);
-        }
-    };
+    // const fetchData = async () => {
+    //     try {
+    //         const response = await fetch(`${backend_url}/showUsers`);
+    //         const responseData = await response.json();
+    //         setAttendanceData(responseData);
+    //         setFilteredEntries(responseData);
+    //         setFinalEntries(responseData);
+    //     } catch (error) {
+    //         console.error('Error fetching data:', error);
+    //     }
+    // };
+const fetchData = async () => {
+    try {
+        const token = localStorage.getItem("token"); // Use your actual login token key
 
+        const response = await fetch(`${backend_url}/showUsers`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+
+        const responseData = await response.json();
+
+        if (!response.ok) {
+            throw new Error(responseData.message || "Failed to fetch members");
+        }
+
+        if (!Array.isArray(responseData)) {
+            throw new Error("Invalid member data received from server");
+        }
+
+        setAttendanceData(responseData);
+        setFilteredEntries(responseData);
+        setFinalEntries(responseData);
+
+    } catch (error) {
+        console.error("Error fetching members:", error);
+        toast.error(error.message);
+    }
+};
 
     if (!AttendanceData) {
         return <div>Loading...</div>;

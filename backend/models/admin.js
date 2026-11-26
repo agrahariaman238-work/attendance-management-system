@@ -63,3 +63,4 @@ adminSchema.pre("save", async function (next) {
 
 const Admin = mongoose.model("Admin", adminSchema);
 module.exports = Admin;
+ 

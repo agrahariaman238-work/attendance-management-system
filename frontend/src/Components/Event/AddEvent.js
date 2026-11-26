@@ -51,10 +51,13 @@ const NewEventForm = () => {
     );
 
     try {
+      const token = localStorage.getItem("token");
+
       const response = await fetch(`${backend_url}/addEvent`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           name,

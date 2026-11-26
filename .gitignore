@@ -1,3 +1,6 @@
+# Ignore downloaded AWS deployment resources
+ECR ECS Deployment_files/
+
 # ========================
 # Dependencies
 # ========================
@@ -39,3 +42,18 @@ yarn-error.log*
 # ========================
 .pnp
 .pnp.js
+
+# Private keys and certificates
+*.pem
+*.key
+*.p12
+*.pfx
+
+# AWS credentials
+.aws/
+
+# AWS access keys
+ecr-nss_user_accessKeys.csv
+
+# AWS deployment HTML file
+ECR ECS Deployment.html

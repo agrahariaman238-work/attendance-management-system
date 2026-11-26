@@ -12,6 +12,8 @@ import CurrentEvent from './Components/Event/CurrentEvents';
 import PastEvent from './Components/Event/PastEvents';
 import ShowCurrentEvent from './Components/Event/ShowCurrentEvent';
 import ShowPastEvent from './Components/Event/ShowPastEvent';
+import WidgetChat from './Components/WidgetChat';
+import AdminDashboard from './Components/Admin/AdminDashboard';
 import NotFound404 from './Components/NotFound404'
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -99,6 +101,8 @@ const App = () => {
         <Route path="/showCurrentEvent/:id" element={(isAuthenticated) ? <ShowCurrentEvent /> : <Navigate to="/login" />} />
         <Route path="/showPastEvent/:id" element={(isAuthenticated) ? <ShowPastEvent /> : <Navigate to="/login" />} />
         <Route path="/showUsers" element={(isAuthenticated && isAdmin1) ? <ShowUsers /> : <Navigate to="/login" />} />
+        <Route path="/chatbot" element={(isAuthenticated) ? <WidgetChat /> : <Navigate to="/login" />} />
+        <Route path="/admin-dashboard" element={(isAuthenticated && isAdmin1) ? <AdminDashboard /> : <Navigate to="/login" />} />
         <Route path="*" element={<NotFound404 />} />
       </Routes>
     {/* </Router> */}

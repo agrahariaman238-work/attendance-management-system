@@ -9,9 +9,9 @@ import { backend_url } from "../services";
 // import * as XLSX from 'xlsx';
 
 const AdminHeader = () => {
-  const [AttendanceData, setAttendanceData] = useState(null);
-  const [filteredEntries, setFilteredEntries] = useState(null);
-  const [PastEventsEnteries, setPastEventsEnteries] = useState(null);
+  const [AttendanceData, setAttendanceData] = useState([]);
+  const [filteredEntries, setFilteredEntries] = useState([]);
+  const [PastEventsEnteries, setPastEventsEnteries] = useState([]);
 
   // const [showModal, setShowModal] = React.useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -37,8 +37,23 @@ const AdminHeader = () => {
 
   const fetchData = async () => {
     try {
-      const response = await fetch(`${backend_url}/showEvents`);
+      const token = localStorage.getItem("token");
+
+        const response = await fetch(`${backend_url}/showEvents`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`API Error: ${response.status}`);
+        }
+      // const response = await fetch(`${backend_url}/showEvents`);
       const responseData = await response.json();
+      if (!Array.isArray(responseData)) {
+            throw new Error("Invalid events response from server");
+        }
+        
       setAttendanceData(responseData);
       const ActivedisplayedEntries = responseData.filter(
         (event) => new Date(event.endDate) < new Date()

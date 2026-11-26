@@ -55,6 +55,24 @@ function CustomNavbar({ isAuthenticated }) {
               All Admins
             </Nav.Link>
 
+            <Nav.Link
+              as={NavLink}
+              to="/chatbot"
+              onClick={() => handleTabChange("chatbot")}
+              className={activeTab === "chatbot" ? "active" : ""}
+            >
+              AI Assistant
+            </Nav.Link>
+
+            <Nav.Link
+              as={NavLink}
+              to="/admin-dashboard"
+              onClick={() => handleTabChange("admin-dashboard")}
+              className={activeTab === "admin-dashboard" ? "active" : ""}
+            >
+              AI Admin dashboard
+            </Nav.Link>
+
             <NavDropdown
               title="Event"
               id="basic-nav-dropdown"

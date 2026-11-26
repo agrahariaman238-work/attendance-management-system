@@ -7,8 +7,9 @@ import { backend_url } from "../services";
 import toast from "react-hot-toast";
 
 const AdminHeader = () => {
-  const [AttendanceData, setAttendanceData] = useState(null);
-  const [filteredEntries, setFilteredEntries] = useState(null);
+  const [AttendanceData, setAttendanceData] = useState([]);
+  const [filteredEntries, setFilteredEntries] = useState([]);
+  // const [finalEntries, setFinalEntries] = useState([]);
   const [showModal, setShowModal] = React.useState(false);
   const [entriesToShow, setEntriesToShow] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
@@ -36,16 +37,52 @@ const AdminHeader = () => {
     fetchData();
   }, []);
 
+  // const fetchData = async () => {
+  //   try {
+  //     const response = await fetch(`${backend_url}/showAdmins`);
+  //     const responseData = await response.json();
+  //     setAttendanceData(responseData);
+  //     setFilteredEntries(responseData);
+  //   } catch (error) {
+  //     console.error("Error fetching data:", error);
+  //   }
+  // };
   const fetchData = async () => {
     try {
-      const response = await fetch(`${backend_url}/showAdmins`);
-      const responseData = await response.json();
-      setAttendanceData(responseData);
-      setFilteredEntries(responseData);
+        const token = localStorage.getItem("token"); // Verify your actual token key
+
+        const response = await fetch(`${backend_url}/showUsers`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+
+        const responseData = await response.json();
+
+        console.log("ShowUsers API response:", responseData);
+
+        if (!response.ok) {
+            throw new Error(responseData.message || "Failed to fetch users");
+        }
+
+        // Support both array and { users: [...] } response formats
+        const users = Array.isArray(responseData)
+            ? responseData
+            : responseData.users;
+
+        if (!Array.isArray(users)) {
+            throw new Error("API did not return a valid users array");
+        }
+
+        setAttendanceData(users);
+        setFilteredEntries(users);
+        // setFinalEntries(users);
+
     } catch (error) {
-      console.error("Error fetching data:", error);
+        console.error("Error fetching users:", error);
+        toast.error(error.message);
     }
-  };
+};
 
   if (AttendanceData === null) {
     return <div>Loading...</div>;

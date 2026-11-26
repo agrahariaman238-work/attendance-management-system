@@ -16,4 +16,4 @@ const Connection = () => {
     .then(() => console.log("connection successfull .."))
     .catch((err) => console.log("error is ----- >>>>> ------ \n", err));
 };
-Connection();
+module.exports = Connection;

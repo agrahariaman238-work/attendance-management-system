@@ -1,34 +1,22 @@
-
 services:
-  backend:
-    platform: linux/amd64
-    build: ./backend
-    image: agrahariaman238work/nss-attendance-system-main:backend-2.0
-    restart: unless-stopped
-    ports:
-      - "8000:8000"
-    # Reads runtime env file for Express
-    env_file:
-      - ./backend/.env
 
   frontend:
-    platform: linux/amd64
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-      args:
-        # Reads .env on host machine and passes value to ARG in Dockerfile
-        # - REACT_APP_BACKEND_URL=${REACT_APP_BACKEND_URL}
-        # - REACT_APP_BACKEND_URL=http://localhost:8000
-        #load balancer 
-        - REACT_APP_BACKEND_URL=http://nss-attendance-management-system-927014244.ap-south-1.elb.amazonaws.com:8000
-        #ecs task definition
-        # - REACT_APP_BACKEND_URL=http://3.109.108.194:8000
-        #ec2
-        # - REACT_APP_BACKEND_URL=http://52.66.225.4:8000
-    image: agrahariaman238work/nss-attendance-system-main:frontend-2.0
-    restart: unless-stopped
+    build: ./frontend
     ports:
-      - "3000:80"
-    depends_on:
-      - backend
+      - "80:80"
+    networks:
+      - attendance-network
+
+  backend:
+    build: ./backend
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./backend/.env
+    networks:
+      - attendance-network
+    restart: unless-stopped
+
+networks: 
+  attendance-network:
+    driver: bridge
